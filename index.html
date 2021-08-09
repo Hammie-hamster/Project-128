@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>AI MUSIC WEB APP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+
+  <script src="https://unpkg.com/ml5@0.4.3/dist/ml5.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+<body background = "https://i.postimg.cc/139VnmQ0/download.jpg">
+<center>
+  	<h3 class = "btn btn-warning heading">AI MUSIC WEB APP
+	    <br>
+	    <span class = "note">NOTE - Get your left-hand wrist in front of the webcam to play Peter Pan Song. Get your right-hand wrist in front of the webcam to play Harry Potter Theme Song.
+        Keep at least 2 feet distance from the webcam, so 
+        <br>
+        that your wrists are detected quickly.</span>
+  	</h3>
+	<br><br>
+    <br>
+    <h3 class = "btn btn-danger" id = "song_name">Song Name</h3>
+</center>
+
+<script src="main.js"></script>
+</body>
+<style>
+    .heading {
+        font-size : 23px;
+        width : 100%;
+        margin : 0px;
+    }
+
+    .note {
+        font-size : 15px;
+        color : black;
+    }
+
+    body {
+        background-size : cover;
+    }
+
+    #song_name {
+        width: 175px;
+        font-size: 25px;
+        text-align: center;
+    }
+
+    canvas {
+        border:5px solid white;
+        border-radius:20px;
+    }
+</style>
+<script>
+var song1 = "";
+    var song2 = "";
+
+leftWristX = 0;
+leftWristY = 0;
+
+rightWristX = 0;
+rightWristY = 0;
+
+function preload() {
+    song1 = loadSound("music.mp3");
+    song2 = loadSound("music2.mp3");
+    song1.setVolume(1);
+    song1.rate(1);
+    song2.setVolume(1);
+    song2.rate(1);
+}
+
+function setup() {
+    canvas = createCanvas(600, 500);
+    canvas.center();
+
+    video = createCapture(VIDEO);
+    video.hide();
+
+    poseNet = ml5.poseNet(video, modelLoaded);
+    poseNet.on('pose', gotPoses);
+}
+
+function modelLoaded() {
+    console.log('PoseNet Is Initialized');
+}
+
+function draw() {
+    image(video, 0, 0, 600, 500);
+}
+
+function gotPoses(results) {
+    if(results.length > 0) {
+        console.log(results);
+
+        leftWristX = results[0].pose.leftWrist.x;
+        leftWristY = results[0].pose.leftWrist.y;
+        console.log("LeftWristX = " + leftWristX + " | LeftWristY = " + leftWristY);
+
+        rightWristX = results[0].pose.rightWrist.x;
+        rightWristY = results[0].pose.rightWrist.y;
+        console.log("RightWristX = " + rightWristX + " | RightWristY = " + rightWristY);
+    }
+}
+</script>
+</html>
